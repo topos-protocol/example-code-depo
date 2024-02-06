@@ -13,3 +13,6 @@ contract Memory {
     return engram;
   }
 }
+
+// This is the complete contract. It can store strings up to 256 bytes
+// in length, and it can retrieve the stored string and return it.
