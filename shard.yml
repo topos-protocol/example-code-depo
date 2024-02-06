@@ -1,0 +1,9 @@
+name: example-code-specs
+version: 0.1.0
+
+authors:
+  - Kirk Haines <wyhaines@gmail.com>
+
+crystal: '>= 1.11.2'
+
+license: MIT
