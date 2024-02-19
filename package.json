@@ -1,0 +1,19 @@
+{
+  "name": "example-code-depot",
+  "version": "1.0.0",
+  "description": "This repository will provide a place to keep example code for Topos documentation, tutorials, guides, and even small demos or starter projects.",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-viem": "^2.0.0",
+    "hardhat": "^2.20.1"
+  }
+}
