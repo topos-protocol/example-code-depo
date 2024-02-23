@@ -25,29 +25,30 @@ contract GenericCompliance {
   );
 
   struct Record {
-    bytes32 id;
+    bytes32 id; // System generated unique identifier for each record
     bytes32 receivingEntityId; // client-determined unique ID for the recipient
     bytes32 resourceId; // client-determined unique ID for the resource
     bytes32 organizationId; // client-determined unique ID for the issuing organization for the resource
-    string ref; // URL or other unique data reference that the client can use to retrieve the resource
     bytes32 status; // encoded status of the resource
-    uint documentIssueDate;
-    uint timestamp;
-    uint nonce; // record issue nonce.
-    string notes; // Any data can go here, but the presumption is that it will be rarely used because of the potential for high gas costs.
     bytes32 previous; // the previous record in the linked list
-    bool isValue;
+    uint statusIssueDate; // a timestamp field available to record when the status update became active
+    uint timestamp; // a timestamp for this transaction
+    uint nonce; // record issue nonce; this increases by one for each new record
+    string ref; // URL or other unique data reference that the client can use to retrieve the resource
+    string notes; // any data can go here; data as-needed for the use case
+    bool exists;
   }
   mapping(bytes32 => Record) private objects; // The contract's database of resource records
 
+  // A `Store` is a pointer to the first record in the linked list of records for a given resource.
   struct Store {
     bytes32 head;
     uint length;
-    bool isValue;
+    bool exists;
   }
-  mapping(string => Store) private index; // This mapping allows one to query the current most-recent record for a given resource key.
+
+  mapping(string => Store) private index; // The `index` maps keys (used when adding an entry, or retrieving one) to a Store record.
   uint public length = 0; // Maintain a count of the total number of records in the store.
-  string[] private keys;
 
   struct AddEntryVars {
     string key;
@@ -59,6 +60,19 @@ contract GenericCompliance {
     string notes;
   }
 
+  /**
+   * @notice Adds a new compliance entry for a given resource.
+   * @dev Creates a new record in the contract, linking it to previous entries of the same resource. Emits an `AddEntry` event upon success.
+   * @param key A unique key identifying the resource.
+   * @param receivingEntityId The ID of the entity receiving the status update.
+   * @param resourceId The ID of the resource being tracked.
+   * @param organizationId The ID of the organization issuing the update.
+   * @param ref A reference link or identifier for additional information about the resource.
+   * @param status The new status of the resource.
+   * @param statusIssueDate The timestamp when the status is issued.
+   * @param notes Additional notes or comments regarding the status update.
+   * @return success A boolean indicating whether the entry was successfully added.
+   */
   function addEntry(
     string calldata key,
     bytes32 receivingEntityId,
@@ -66,17 +80,16 @@ contract GenericCompliance {
     bytes32 organizationId,
     string calldata ref,
     bytes32 status,
-    uint documentIssueDate,
+    uint statusIssueDate,
     string calldata notes
-  ) public returns (bool){
+  ) external returns (bool success) {
     AddEntryVars memory lvars;
     lvars.key = key;
     lvars.notes = notes;
     lvars.timestamp = block.timestamp;
     lvars.offset = lvars.timestamp;
 
-    if (index[lvars.key].isValue != true) {
-      keys.push(lvars.key);
+    if (index[lvars.key].exists != true) {
       index[lvars.key] = Store(lvars.previous,1,true);
       lvars.nonce = 0;
     } else {
@@ -92,7 +105,7 @@ contract GenericCompliance {
           organizationId,
           ref,
           status,
-          documentIssueDate,
+          statusIssueDate,
           lvars.offset,
           lvars.nonce,
           notes,
@@ -101,20 +114,20 @@ contract GenericCompliance {
       );
       lvars.offset = lvars.offset + 1;
       // The odds are infinitesimal, but if there is an ID conflict, just change one of the input values (the offset) and recalualge to get a new ID.
-    } while (objects[lvars.id].isValue);
+    } while (objects[lvars.id].exists);
 
     Record memory record = Record(
       lvars.id,
       receivingEntityId,
       resourceId,
       organizationId,
-      ref,
       status,
-      documentIssueDate,
+      lvars.previous,
+      statusIssueDate,
       lvars.timestamp,
       lvars.nonce,
+      ref,
       notes,
-      lvars.previous,
       true
     );
 
@@ -139,62 +152,45 @@ contract GenericCompliance {
     bytes32,
     bytes32,
     bytes32,
-    string memory,
+    bytes32,
     bytes32,
     uint,
     uint,
     uint,
     string memory,
-    bytes32
+    string memory
   ) {
-    AddEntryVars memory lvars;
-    lvars.id = _id;
-    Record memory object = objects[lvars.id];
+    Record memory object = objects[_id];
     return (
       object.id,
       object.receivingEntityId,
       object.resourceId,
       object.organizationId,
-      object.ref,
       object.status,
-      object.documentIssueDate,
+      object.previous,
+      object.statusIssueDate,
       object.timestamp,
       object.nonce,
-      object.notes,
-      object.previous
+      object.ref,
+      object.notes
     );
   }
 
-  function getLatest(string calldata _key) public view returns (
+  function getLatest(string calldata _key) external view returns (
     bytes32,
     bytes32,
     bytes32,
     bytes32,
-    string memory,
+    bytes32,
     bytes32,
     uint,
     uint,
     uint,
     string memory,
-    bytes32
+    string memory
   ) {
-    AddEntryVars memory lvars;
-    lvars.key = _key;
-    bytes32 id = index[lvars.key].head;
-    Record memory object = objects[id];
-    return (
-      object.id,
-      object.receivingEntityId,
-      object.resourceId,
-      object.organizationId,
-      object.ref,
-      object.status,
-      object.documentIssueDate,
-      object.timestamp,
-      object.nonce,
-      object.notes,
-      object.previous
-    );
+    bytes32 id = index[_key].head;
+    return getEntry(id);
   }
 
 }
