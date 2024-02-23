@@ -2,7 +2,7 @@ require "../spec_helper"
 
 describe "Create Your Messaging Protocol" do
   it "TokenSent appears correct" do
-    # https://github.com/topos-protocol/topos-smart-contracts/blob/v3.1.0/contracts.interfaces/IERC20Messaging.sol
+    # https://github.com/topos-protocol/topos-smart-contracts/blob/v3.1.0/contracts/interfaces/IERC20Messaging.sol
     # lines 21..27
     ierc20messagingprotocol = ExampleFile.from_github(
       org: "topos-protocol",
