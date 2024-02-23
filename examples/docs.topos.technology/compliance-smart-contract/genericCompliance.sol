@@ -2,37 +2,27 @@
 
 pragma solidity ^0.8;
 
-// This is a generic implementation of a contract for providing a compliance certification
-// system built upon a blockchain.
+// This is a contract that implements a generic data compliance contract.
+// It allows for the storage of linked lists of elements, where each element
+// represents a status and optional notes for some resource, owned by some
+// entity, issued by some organization, on a given date.
+// The linked list lets one traverse a complete history of status changes
+// for a given resource.
 //
-// The intention of the contract is to define a data structure that can flexibly accommodate
-// a wide variety of compliance applications. The basic concept is that the contract wraps a
-// data structure which will store an immutable sequence of records about each item that
-// requires compliance certification.
-//
-// The data structure itself is represented by a mapping which is indexed by a unique key, and
-// which points to the most recent record for that key. That record is the head of a linked
-// list of all previous records for that key. In this way, a very fast query will return the
-// current status of any given item, while the complete history is avbailable at any time by
-// performing additional queries.
+// The implementation builds the linked list backwards, updating the head with
+// every new element, which each new element pointing to the previous head element.
+// In this way, the most common use case, which is to query what the current state
+// is for a given resource, will be a single element query, and it will never have
+// to traverse the linked list.
 contract GenericCompliance {
-
-  string public constant version = "0.1.0";
-
-  // event AddEntry(
-  //   bytes32 id,
-  //   bytes32 indexed receivingEntityId,
-  //   bytes32 indexed resourceId,
-  //   bytes32 indexed organizationId,
-  //   string ref,
-  //   bytes32 status,
-  //   bytes32 hash,
-  //   uint documentIssueDate,
-  //   uint timestamp,
-  //   uint nonce,
-  //   string notes,
-  //   bytes32 previous
-  // );
+  event AddEntry(
+    string indexed key,
+    bytes32 id,
+    bytes32 indexed receivingEntityId,
+    bytes32 indexed resourceId,
+    bytes32 organizationId,
+    bytes32 status
+  );
 
   struct Record {
     bytes32 id;
@@ -41,7 +31,6 @@ contract GenericCompliance {
     bytes32 organizationId; // client-determined unique ID for the issuing organization for the resource
     string ref; // URL or other unique data reference that the client can use to retrieve the resource
     bytes32 status; // encoded status of the resource
-    bytes32 hash; // storage for a unique hash code for the resource
     uint documentIssueDate;
     uint timestamp;
     uint nonce; // record issue nonce.
@@ -60,7 +49,6 @@ contract GenericCompliance {
   uint public length = 0; // Maintain a count of the total number of records in the store.
   string[] private keys;
 
-  // Use a structure for local variables, to work around the stack limit of 16 local variables. 
   struct AddEntryVars {
     string key;
     uint timestamp;
@@ -78,7 +66,6 @@ contract GenericCompliance {
     bytes32 organizationId,
     string calldata ref,
     bytes32 status,
-    bytes32 hash,
     uint documentIssueDate,
     string calldata notes
   ) public returns (bool){
@@ -105,7 +92,6 @@ contract GenericCompliance {
           organizationId,
           ref,
           status,
-          hash,
           documentIssueDate,
           lvars.offset,
           lvars.nonce,
@@ -114,6 +100,7 @@ contract GenericCompliance {
         )
       );
       lvars.offset = lvars.offset + 1;
+      // The odds are infinitesimal, but if there is an ID conflict, just change one of the input values (the offset) and recalualge to get a new ID.
     } while (objects[lvars.id].isValue);
 
     Record memory record = Record(
@@ -123,7 +110,6 @@ contract GenericCompliance {
       organizationId,
       ref,
       status,
-      hash,
       documentIssueDate,
       lvars.timestamp,
       lvars.nonce,
@@ -137,21 +123,15 @@ contract GenericCompliance {
     index[lvars.key].length = index[lvars.key].length + 1;
     length = length + 1;
 
-    // emit AddEntry(
-    //   lvars.id,
-    //   receivingEntityId,
-    //   resourceId,
-    //   organizationId,
-    //   ref,
-    //   status,
-    //   hash,
-    //   documentIssueDate,
-    //   lvars.timestamp,
-    //   lvars.nonce,
-    //   lvars.notes,
-    //   lvars.previous
-    // );    
-    return true;
+    emit AddEntry(
+      key,
+      lvars.id,
+      receivingEntityId,
+      resourceId,
+      organizationId,
+      status
+    );    
+     return true;
   }
 
   function getEntry(bytes32 _id) public view returns (
@@ -160,7 +140,6 @@ contract GenericCompliance {
     bytes32,
     bytes32,
     string memory,
-    bytes32,
     bytes32,
     uint,
     uint,
@@ -178,7 +157,6 @@ contract GenericCompliance {
       object.organizationId,
       object.ref,
       object.status,
-      object.hash,
       object.documentIssueDate,
       object.timestamp,
       object.nonce,
@@ -193,7 +171,6 @@ contract GenericCompliance {
     bytes32,
     bytes32,
     string memory,
-    bytes32,
     bytes32,
     uint,
     uint,
@@ -212,7 +189,6 @@ contract GenericCompliance {
       object.organizationId,
       object.ref,
       object.status,
-      object.hash,
       object.documentIssueDate,
       object.timestamp,
       object.nonce,
