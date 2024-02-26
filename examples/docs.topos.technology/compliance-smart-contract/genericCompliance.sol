@@ -101,13 +101,7 @@ contract GenericCompliance {
     lvars.timestamp = block.timestamp;
     lvars.offset = lvars.timestamp;
 
-    if (index[lvars.key].exists != true) {
-      index[lvars.key] = Store(lvars.previous,1,true);
-      lvars.nonce = 0;
-    } else {
-      lvars.previous = index[key].head;
-      lvars.nonce = index[key].length;
-    }
+    setNonceAndPrevious(lvars);
 
     lvars.id = generateId(
       generateIdVars(
@@ -138,10 +132,7 @@ contract GenericCompliance {
       true
     );
 
-    objects[lvars.id] = record;
-    index[lvars.key].head = lvars.id;
-    index[lvars.key].length = index[lvars.key].length + 1;
-    length = length + 1;
+    updateObjectAndIndex(lvars, record);
 
     emit AddEntry(
       key,
@@ -154,6 +145,26 @@ contract GenericCompliance {
      return true;
   }
 
+  /**
+  * @notice Sets the `nonce` and the `previous` values, and if this is the first record, establishes the `Store` record in the `index`.
+  * @param lvars The `lvars` of the current record.
+  */
+  function setNonceAndPrevious(AddEntryVars memory lvars) internal {
+    if (index[lvars.key].exists != true) {
+      index[lvars.key] = Store(lvars.previous,1,true);
+      lvars.nonce = 0;
+    } else {
+      lvars.previous = index[lvars.key].head;
+      lvars.nonce = index[lvars.key].length;
+    }
+  }
+
+  /**
+  * @notice Generates a unique ID for the object described by the provided data. It checks for an id conflic, and mutates the ID in the (very unlikely) case of a conflict.
+  * @dev Takes an instance of `generateIdVars` containing all of the variables which describe a given record, and hashes those into a `bytes32` using `keccak256`.
+  * @param gvars The `generateIdVars` instance that describes the record.
+  * @return id A `bytes32` encoding of the `keccak256` value that was calculated.
+  */
   function generateId(
     generateIdVars memory gvars
   ) internal view returns (
@@ -185,6 +196,19 @@ contract GenericCompliance {
   }
 
   /**
+  * @notice Update the object store and the index head and length for the new record.
+  */
+  function updateObjectAndIndex(
+    AddEntryVars memory lvars,
+    Record memory record
+  ) internal {
+    objects[lvars.id] = record;
+    index[lvars.key].head = lvars.id;
+    index[lvars.key].length = index[lvars.key].length + 1;
+    length = length + 1;
+  }
+
+  /**
   * @notice Retrieves the compliance record for a given ID.
   * @dev Returns detailed information about the compliance status of a resource. This includes metadata like the issuing organization, status, and timestamps.
   * @param _id The unique identifier of the compliance record to retrieve.
@@ -199,7 +223,7 @@ contract GenericCompliance {
   * @return nonce The nonce of the record, indicating its sequence in the compliance history.
   * @return ref A reference link or identifier for additional information about the resource.
   * @return notes Additional notes or comments regarding the status update.
-  * @return a bool value that is true if this is a record which actually exists on-chain (it has been previously stored).
+  * @return exists A bool value that is true if this is a record which actually exists on-chain (it has been previously stored).
   */
   function getEntry(bytes32 _id) public view returns (
     bytes32,
