@@ -60,6 +60,18 @@ contract GenericCompliance {
     string notes;
   }
 
+  struct generateIdVars {
+    bytes32 receivingEntityId;
+    bytes32 resourceId;
+    bytes32 organizationId;
+    bytes32 previous;
+    bytes32 status;
+    uint statusIssueDate;
+    uint nonce;
+    string ref;
+    string notes;
+  }
+
   /**
    * @notice Adds a new compliance entry for a given resource.
    * @dev Creates a new record in the contract, linking it to previous entries of the same resource. Emits an `AddEntry` event upon success.
@@ -97,24 +109,19 @@ contract GenericCompliance {
       lvars.nonce = index[key].length;
     }
 
-    do {
-      lvars.id = keccak256(
-        abi.encodePacked(
-          receivingEntityId,
-          resourceId,
-          organizationId,
-          ref,
-          status,
-          statusIssueDate,
-          lvars.offset,
-          lvars.nonce,
-          notes,
-          lvars.previous
-        )
-      );
-      lvars.offset = lvars.offset + 1;
-      // The odds are infinitesimal, but if there is an ID conflict, just change one of the input values (the offset) and recalualge to get a new ID.
-    } while (objects[lvars.id].exists);
+    lvars.id = generateId(
+      generateIdVars(
+        receivingEntityId,
+        resourceId,
+        organizationId,
+        lvars.previous,
+        status,
+        statusIssueDate,
+        lvars.nonce,
+        ref,
+        notes
+      )
+    );
 
     Record memory record = Record(
       lvars.id,
@@ -147,6 +154,53 @@ contract GenericCompliance {
      return true;
   }
 
+  function generateId(
+    generateIdVars memory gvars
+  ) internal view returns (
+    bytes32
+  ) {
+      bytes32 id;
+      uint offset = 0;
+
+      do {
+        id = keccak256(
+        abi.encodePacked(
+          gvars.receivingEntityId,
+          gvars.resourceId,
+          gvars.organizationId,
+          gvars.ref,
+          gvars.status,
+          gvars.statusIssueDate,
+          offset,
+          gvars.nonce,
+          gvars.notes,
+          gvars.previous
+        )
+      );
+      offset = offset + 1;
+      // The odds are infinitesimal, but if there is an ID conflict, just change one of the input values (the offset) and recalualge to get a new ID.
+    } while (objects[id].exists);
+
+    return id;
+  }
+
+  /**
+  * @notice Retrieves the compliance record for a given ID.
+  * @dev Returns detailed information about the compliance status of a resource. This includes metadata like the issuing organization, status, and timestamps.
+  * @param _id The unique identifier of the compliance record to retrieve.
+  * @return id The unique identifier of the retrieved compliance record.
+  * @return receivingEntityId The ID of the entity receiving the status update.
+  * @return resourceId The ID of the resource being tracked.
+  * @return organizationId The ID of the organization issuing the update.
+  * @return status The current status of the resource.
+  * @return previous The ID of the previous record in the compliance history.
+  * @return statusIssueDate The timestamp when the status was issued.
+  * @return timestamp The timestamp when this record was created.
+  * @return nonce The nonce of the record, indicating its sequence in the compliance history.
+  * @return ref A reference link or identifier for additional information about the resource.
+  * @return notes Additional notes or comments regarding the status update.
+  * @return a bool value that is true if this is a record which actually exists on-chain (it has been previously stored).
+  */
   function getEntry(bytes32 _id) public view returns (
     bytes32,
     bytes32,
@@ -158,7 +212,8 @@ contract GenericCompliance {
     uint,
     uint,
     string memory,
-    string memory
+    string memory,
+    bool
   ) {
     Record memory object = objects[_id];
     return (
@@ -172,10 +227,28 @@ contract GenericCompliance {
       object.timestamp,
       object.nonce,
       object.ref,
-      object.notes
+      object.notes,
+      object.exists
     );
   }
 
+  /**
+  * @notice Retrieves the most recent compliance record for a given key.
+  * @dev Returns detailed information about the compliance status of a resource. This includes metadata like the issuing organization, status, and timestamps. All prior records can be traversed by retrieving successive records pointed to by the `previous` ID, until that field contains an empty value.
+  * @param _key The unique key of the chain of compliance records to access.
+  * @return id The unique identifier of the retrieved compliance record.
+  * @return receivingEntityId The ID of the entity receiving the status update.
+  * @return resourceId The ID of the resource being tracked.
+  * @return organizationId The ID of the organization issuing the update.
+  * @return status The current status of the resource.
+  * @return previous The ID of the previous record in the compliance history.
+  * @return statusIssueDate The timestamp when the status was issued.
+  * @return timestamp The timestamp when this record was created.
+  * @return nonce The nonce of the record, indicating its sequence in the compliance history.
+  * @return ref A reference link or identifier for additional information about the resource.
+  * @return notes Additional notes or comments regarding the status update.
+  * @return a bool value that is true if this is a record which actually exists on-chain (it has been previously stored).
+  */
   function getLatest(string calldata _key) external view returns (
     bytes32,
     bytes32,
@@ -187,7 +260,8 @@ contract GenericCompliance {
     uint,
     uint,
     string memory,
-    string memory
+    string memory,
+    bool
   ) {
     bytes32 id = index[_key].head;
     return getEntry(id);
