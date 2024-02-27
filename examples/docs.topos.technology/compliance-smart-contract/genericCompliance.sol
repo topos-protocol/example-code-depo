@@ -207,18 +207,21 @@ contract GenericCompliance is AccessControl {
         }
     }
 
-    /// @notice Grants the CREATE_ROLE to a specified address, allowing it to create new roles.
-    /// @dev Checks if the `msg.sender` has the CREATE_ROLE before granting the same role to `addr`.
-    ///     Uses the `grantRole` function to assign the role.
-    /// @param addr The address to be granted the CREATE_ROLE.
-    /// @custom:revert NoCreateRole if `msg.sender` does not have the CREATE_ROLE.
+    /// @notice Grants a specified role to an address if the caller has admin access for that role.
+    /// @dev This function checks if the caller has the ADMIN role for the given `id` and `variant`, and if so, grants the specified `access` role to `addr`.
+    ///      Utilizes `roleFor` to determine the admin role for the given `id` and `variant`, and `rolesFor` to retrieve the specific role hashes.
+    /// @param addr The address to be granted the role.
+    /// @param id The unique identifier for which the role is associated.
+    /// @param variant The category of the role (ENTITY, RESOURCE, ORGANIZATION).
+    /// @param access The level of access (READ, WRITE, ADMIN) to be granted.
+    /// @custom:error InsufficientRoleAuthorized Throws if the caller does not have ADMIN access for the specified `id` and `variant`.
     function grantRole(
         address addr,
         bytes32 id,
         RoleVariant variant,
         RoleAccess access
     ) public {
-        if (!hasRole(roleFor(id, variant, access), msg.sender)) {
+        if (!hasRole(roleFor(id, variant, RoleAccess.ADMIN), msg.sender)) {
             revert InsufficientRoleAuthorized(
                 msg.sender,
                 id,
@@ -475,6 +478,19 @@ contract GenericCompliance is AccessControl {
         )
     {
         Record memory object = objects[_id];
+
+        if (
+            !hasAnyRoleFor(
+                msg.sender,
+                object.receivingEntityId,
+                object.resourceId,
+                object.organizationId,
+                RoleAccess.READ
+            )
+        ) {
+            revert InsufficientRolesAvailable(msg.sender, RoleAccess.READ);
+        }
+
         return (
             object.id,
             object.receivingEntityId,
