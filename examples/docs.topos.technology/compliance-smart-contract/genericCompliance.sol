@@ -54,6 +54,7 @@ contract GenericCompliance is AccessControl {
     /// @param addr The address attempting to create a new role.
     error NoCreateRole(address addr);
 
+    /// @notice Establish a base level `create` role which allows other roles to be created and granted.
     bytes32 public constant CREATE_ROLE = keccak256("CREATE_ROLE");
 
     mapping(bytes32 => bytes32[3]) public entityRoles;
