@@ -12,38 +12,38 @@
 <!-- 0 -->
 <g id="node1" class="node">
 <title>0</title>
-<polygon fill="#f2f2f2" stroke="black" points="987.29,-0.5 987.29,-511.7 2007.17,-511.7 2007.17,-0.5 987.29,-0.5"/>
+<polygon fill="#f2f2f2" stroke="black" points="982.63,-0.5 982.63,-511.7 2011.83,-511.7 2011.83,-0.5 982.63,-0.5"/>
 <text text-anchor="middle" x="1497.23" y="-495.1" font-family="Times,serif" font-size="14.00">GenericCompliance</text>
 <text text-anchor="middle" x="1497.23" y="-478.3" font-family="Times,serif" font-size="14.00">examples/docs.topos.technology/compliance&#45;smart&#45;contract/genericCompliance.sol</text>
-<polyline fill="none" stroke="black" points="987.29,-470.1 2007.17,-470.1 "/>
-<text text-anchor="start" x="995.29" y="-453.5" font-family="Times,serif" font-size="14.00">Private:</text>
-<text text-anchor="start" x="995.29" y="-436.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;objects: mapping(bytes32=&gt;Record)</text>
-<text text-anchor="start" x="995.29" y="-419.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;index: mapping(string=&gt;Store)</text>
-<text text-anchor="start" x="995.29" y="-403.1" font-family="Times,serif" font-size="14.00">Public:</text>
-<text text-anchor="start" x="995.29" y="-386.3" font-family="Times,serif" font-size="14.00"> &#160;&#160;CREATE_ROLE: bytes32</text>
-<text text-anchor="start" x="995.29" y="-369.5" font-family="Times,serif" font-size="14.00"> &#160;&#160;entityRoles: mapping(bytes32=&gt;bytes32[3])</text>
-<text text-anchor="start" x="995.29" y="-352.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;resourceRoles: mapping(bytes32=&gt;bytes32[3])</text>
-<text text-anchor="start" x="995.29" y="-335.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;organizationRoles: mapping(bytes32=&gt;bytes32[3])</text>
-<text text-anchor="start" x="995.29" y="-319.1" font-family="Times,serif" font-size="14.00"> &#160;&#160;length: uint</text>
-<polyline fill="none" stroke="black" points="987.29,-310.9 2007.17,-310.9 "/>
-<text text-anchor="start" x="995.29" y="-294.3" font-family="Times,serif" font-size="14.00">Internal:</text>
-<text text-anchor="start" x="995.29" y="-277.5" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;generateRoleValues(id: bytes32, variant: RoleVariant): bytes32[3]</text>
-<text text-anchor="start" x="995.29" y="-260.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;hasAnyRoleFor(addr: address, entityId: bytes32, resourceId: bytes32, organizationId: bytes32, access: RoleAccess): bool</text>
-<text text-anchor="start" x="995.29" y="-243.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;setNonceAndPrevious(lvars: AddEntryVars)</text>
-<text text-anchor="start" x="995.29" y="-227.1" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;generateId(gvars: generateIdVars): bytes32</text>
-<text text-anchor="start" x="995.29" y="-210.3" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;updateObjectAndIndex(lvars: AddEntryVars, record: Record)</text>
-<text text-anchor="start" x="995.29" y="-193.5" font-family="Times,serif" font-size="14.00">External:</text>
-<text text-anchor="start" x="995.29" y="-176.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;addEntry(key: string, receivingEntityId: bytes32, resourceId: bytes32, organizationId: bytes32, ref: string, status: bytes32, statusIssueDate: uint, owner: address): (success: bool)</text>
-<text text-anchor="start" x="995.29" y="-159.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;getLatest(_key: string): (bytes32, bytes32, bytes32, bytes32, bytes32, bytes32, address, uint, uint, uint, string, bool)</text>
-<text text-anchor="start" x="995.29" y="-143.1" font-family="Times,serif" font-size="14.00">Public:</text>
-<text text-anchor="start" x="995.29" y="-126.3" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;&lt;&lt;event&gt;&gt; AddEntry(key: string, id: bytes32, receivingEntityId: bytes32, resourceId: bytes32, organizationId: bytes32, status: bytes32)</text>
-<text text-anchor="start" x="995.29" y="-109.5" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;constructor()</text>
-<text text-anchor="start" x="995.29" y="-92.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;rolesFor(id: bytes32, variant: RoleVariant): bytes32[3]</text>
-<text text-anchor="start" x="995.29" y="-75.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;roleFor(id: bytes32, variant: RoleVariant, access: RoleAccess): bytes32</text>
-<text text-anchor="start" x="995.29" y="-59.1" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;grantRole(addr: address, id: bytes32, variant: RoleVariant, access: RoleAccess)</text>
-<text text-anchor="start" x="995.29" y="-42.3" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;grantCreateRole(addr: address)</text>
-<text text-anchor="start" x="995.29" y="-25.5" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;createRole(id: bytes32, variant: RoleVariant)</text>
-<text text-anchor="start" x="995.29" y="-8.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;getEntry(_id: bytes32): (bytes32, bytes32, bytes32, bytes32, bytes32, bytes32, address, uint, uint, uint, string, bool)</text>
+<polyline fill="none" stroke="black" points="982.63,-470.1 2011.83,-470.1 "/>
+<text text-anchor="start" x="990.63" y="-453.5" font-family="Times,serif" font-size="14.00">Private:</text>
+<text text-anchor="start" x="990.63" y="-436.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;objects: mapping(bytes32=&gt;Record)</text>
+<text text-anchor="start" x="990.63" y="-419.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;index: mapping(string=&gt;Store)</text>
+<text text-anchor="start" x="990.63" y="-403.1" font-family="Times,serif" font-size="14.00">Public:</text>
+<text text-anchor="start" x="990.63" y="-386.3" font-family="Times,serif" font-size="14.00"> &#160;&#160;CREATE_ROLE: bytes32</text>
+<text text-anchor="start" x="990.63" y="-369.5" font-family="Times,serif" font-size="14.00"> &#160;&#160;entityRoles: mapping(bytes32=&gt;bytes32[3])</text>
+<text text-anchor="start" x="990.63" y="-352.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;resourceRoles: mapping(bytes32=&gt;bytes32[3])</text>
+<text text-anchor="start" x="990.63" y="-335.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;organizationRoles: mapping(bytes32=&gt;bytes32[3])</text>
+<text text-anchor="start" x="990.63" y="-319.1" font-family="Times,serif" font-size="14.00"> &#160;&#160;length: uint</text>
+<polyline fill="none" stroke="black" points="982.63,-310.9 2011.83,-310.9 "/>
+<text text-anchor="start" x="990.63" y="-294.3" font-family="Times,serif" font-size="14.00">Internal:</text>
+<text text-anchor="start" x="990.63" y="-277.5" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;generateRoleValues(id: bytes32, variant: RoleVariant): bytes32[3]</text>
+<text text-anchor="start" x="990.63" y="-260.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;hasAnyRoleFor(addr: address, entityId: bytes32, resourceId: bytes32, organizationId: bytes32, access: RoleAccess): bool</text>
+<text text-anchor="start" x="990.63" y="-243.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;setNonceAndPrevious(lvars: AddRecordVars)</text>
+<text text-anchor="start" x="990.63" y="-227.1" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;generateId(gvars: generateIdVars): bytes32</text>
+<text text-anchor="start" x="990.63" y="-210.3" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;updateObjectAndIndex(lvars: AddRecordVars, record: Record)</text>
+<text text-anchor="start" x="990.63" y="-193.5" font-family="Times,serif" font-size="14.00">External:</text>
+<text text-anchor="start" x="990.63" y="-176.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;addRecord(key: string, receivingEntityId: bytes32, resourceId: bytes32, organizationId: bytes32, ref: string, status: bytes32, statusIssueDate: uint, owner: address): (success: bool)</text>
+<text text-anchor="start" x="990.63" y="-159.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;getLatest(_key: string): (bytes32, bytes32, bytes32, bytes32, bytes32, bytes32, address, uint, uint, uint, string, bool)</text>
+<text text-anchor="start" x="990.63" y="-143.1" font-family="Times,serif" font-size="14.00">Public:</text>
+<text text-anchor="start" x="990.63" y="-126.3" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;&lt;&lt;event&gt;&gt; AddRecord(key: string, id: bytes32, receivingEntityId: bytes32, resourceId: bytes32, organizationId: bytes32, status: bytes32)</text>
+<text text-anchor="start" x="990.63" y="-109.5" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;constructor()</text>
+<text text-anchor="start" x="990.63" y="-92.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;rolesFor(id: bytes32, variant: RoleVariant): bytes32[3]</text>
+<text text-anchor="start" x="990.63" y="-75.9" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;roleFor(id: bytes32, variant: RoleVariant, access: RoleAccess): bytes32</text>
+<text text-anchor="start" x="990.63" y="-59.1" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;grantRole(addr: address, id: bytes32, variant: RoleVariant, access: RoleAccess)</text>
+<text text-anchor="start" x="990.63" y="-42.3" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;grantCreateRole(addr: address)</text>
+<text text-anchor="start" x="990.63" y="-25.5" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;createRole(id: bytes32, variant: RoleVariant)</text>
+<text text-anchor="start" x="990.63" y="-8.7" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;getRecord(_id: bytes32): (bytes32, bytes32, bytes32, bytes32, bytes32, bytes32, address, uint, uint, uint, string, bool)</text>
 </g>
 <!-- 1 -->
 <g id="node2" class="node">
@@ -69,7 +69,7 @@
 <!-- 0&#45;&gt;1 -->
 <g id="edge7" class="edge">
 <title>0&#45;&gt;1</title>
-<path fill="none" stroke="black" d="M987.06,-380.58C827.09,-425.52 651.21,-481.07 492.66,-544.8"/>
+<path fill="none" stroke="black" d="M982.56,-381.85C823.77,-426.57 649.67,-481.68 492.57,-544.83"/>
 <polygon fill="black" stroke="black" points="491.16,-541.63 483.2,-548.62 493.78,-548.12 491.16,-541.63"/>
 </g>
 <!-- 2 -->
@@ -95,7 +95,7 @@
 <title>3</title>
 <polygon fill="#f2f2f2" stroke="black" points="1004,-599.1 1004,-766.3 1488.46,-766.3 1488.46,-599.1 1004,-599.1"/>
 <text text-anchor="middle" x="1246.23" y="-749.7" font-family="Times,serif" font-size="14.00">&lt;&lt;Struct&gt;&gt;</text>
-<text text-anchor="middle" x="1246.23" y="-732.9" font-family="Times,serif" font-size="14.00">AddEntryVars</text>
+<text text-anchor="middle" x="1246.23" y="-732.9" font-family="Times,serif" font-size="14.00">AddRecordVars</text>
 <text text-anchor="middle" x="1246.23" y="-716.1" font-family="Times,serif" font-size="14.00">examples/docs.topos.technology/compliance&#45;smart&#45;contract/genericCompliance.sol</text>
 <polyline fill="none" stroke="black" points="1004,-707.9 1488.46,-707.9 "/>
 <text text-anchor="start" x="1012" y="-691.3" font-family="Times,serif" font-size="14.00">key: string</text>
@@ -168,14 +168,14 @@
 <!-- 0&#45;&gt;6 -->
 <g id="edge10" class="edge">
 <title>0&#45;&gt;6</title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M2007.33,-385.41C2165.04,-430.39 2337.83,-485.54 2492.23,-548.2 2541.54,-568.21 2593.83,-595.04 2638.52,-619.4"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M2011.84,-386.7C2168.34,-431.44 2339.31,-486.14 2492.23,-548.2 2541.54,-568.21 2593.83,-595.04 2638.52,-619.4"/>
 <polygon fill="black" stroke="black" points="2636.91,-622.51 2647.36,-624.24 2640.27,-616.37 2636.91,-622.51"/>
 </g>
 <!-- 1&#45;&gt;0 -->
 <g id="edge3" class="edge">
 <title>1&#45;&gt;0</title>
-<path fill="none" stroke="black" d="M484.63,-555.57C490.53,-553.03 496.4,-550.57 502.23,-548.2 652.86,-487.07 820.99,-433.08 975.55,-388.72"/>
-<polygon fill="black" stroke="black" points="975.59,-388.71 980.26,-383.21 987.13,-385.41 982.46,-390.91 975.59,-388.71"/>
+<path fill="none" stroke="black" d="M484.63,-555.57C490.53,-553.03 496.4,-550.57 502.23,-548.2 651.27,-487.72 817.45,-434.22 970.67,-390.13"/>
+<polygon fill="black" stroke="black" points="971.08,-390.01 975.75,-384.51 982.62,-386.7 977.95,-392.2 971.08,-390.01"/>
 </g>
 <!-- 2&#45;&gt;0 -->
 <g id="edge4" class="edge">
@@ -204,8 +204,8 @@
 <!-- 6&#45;&gt;0 -->
 <g id="edge2" class="edge">
 <title>6&#45;&gt;0</title>
-<path fill="none" stroke="black" d="M2663.73,-624.24C2618.82,-598.65 2562.82,-569.54 2510.23,-548.2 2354.17,-484.87 2179.32,-429.2 2019.38,-383.96"/>
-<polygon fill="black" stroke="black" points="2018.95,-383.84 2012.09,-386.06 2007.4,-380.58 2014.26,-378.36 2018.95,-383.84"/>
+<path fill="none" stroke="black" d="M2663.73,-624.24C2618.82,-598.65 2562.82,-569.54 2510.23,-548.2 2355.6,-485.45 2182.53,-430.22 2023.79,-385.21"/>
+<polygon fill="black" stroke="black" points="2023.45,-385.11 2016.59,-387.33 2011.9,-381.85 2018.76,-379.63 2023.45,-385.11"/>
 </g>
 </g>
 </svg>

@@ -4,9 +4,9 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-// This is a contract that implements a generic data compliance contract.
+// This is a contract that implements a generic data compliance system.
 // It allows for the storage of linked lists of elements, where each element
-// represents a status and optional notes for some resource, owned by some
+// represents a status and optional free form data for a resource, owned by some
 // entity, issued by some organization, on a given date.
 // The linked list lets one traverse a complete history of status changes
 // for a given resource.
@@ -17,14 +17,14 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 // is for a given resource, will be a single element query, and it will never have
 // to traverse the linked list.
 contract GenericCompliance is AccessControl {
-    /// @notice Emitted when a new entry is added to the compliance record.
-    /// @param key The unique key associated with the entry.
+    /// @notice Emitted when a new record is added to the compliance record.
+    /// @param key The unique key associated with the record.
     /// @param id The unique identifier of the newly added record.
     /// @param receivingEntityId The ID of the entity receiving the status update.
     /// @param resourceId The ID of the resource for which the status is updated.
     /// @param organizationId The ID of the organization issuing the status update.
     /// @param status The new status of the resource.
-    event AddEntry(
+    event AddRecord(
         string indexed key,
         bytes32 id,
         bytes32 indexed receivingEntityId,
@@ -102,10 +102,10 @@ contract GenericCompliance is AccessControl {
         bool exists;
     }
 
-    mapping(string => Store) private index; // The `index` maps keys (used when adding an entry, or retrieving one) to a Store record.
+    mapping(string => Store) private index; // The `index` maps keys (used when adding an record, or retrieving one) to a Store record.
     uint public length = 0; // Maintain a count of the total number of records in the store.
 
-    struct AddEntryVars {
+    struct AddRecordVars {
         string key;
         uint timestamp;
         bytes32 id;
@@ -305,8 +305,8 @@ contract GenericCompliance is AccessControl {
             );
     }
 
-    /// @notice Adds a new compliance entry for a given resource.
-    /// @dev Creates a new record in the contract, linking it to previous entries of the same resource. Emits an `AddEntry` event upon success.
+    /// @notice Adds a new compliance record for a given resource.
+    /// @dev Creates a new record in the contract, linking it to previous entries of the same resource. Emits an `AddRecord` event upon success.
     /// @param key A unique key identifying the resource.
     /// @param receivingEntityId The ID of the entity receiving the status update.
     /// @param resourceId The ID of the resource being tracked.
@@ -314,8 +314,8 @@ contract GenericCompliance is AccessControl {
     /// @param ref A reference link or identifier for additional information about the resource.
     /// @param status The new status of the resource.
     /// @param statusIssueDate The timestamp when the status is issued.
-    /// @return success A boolean indicating whether the entry was successfully added.
-    function addEntry(
+    /// @return success A boolean indicating whether the record was successfully added.
+    function addRecord(
         string calldata key,
         bytes32 receivingEntityId,
         bytes32 resourceId,
@@ -337,7 +337,7 @@ contract GenericCompliance is AccessControl {
             revert InsufficientRolesAvailable(msg.sender, RoleAccess.WRITE);
         }
 
-        AddEntryVars memory lvars;
+        AddRecordVars memory lvars;
         lvars.key = key;
         lvars.timestamp = block.timestamp;
         lvars.offset = lvars.timestamp;
@@ -376,7 +376,7 @@ contract GenericCompliance is AccessControl {
             )
         );
 
-        emit AddEntry(
+        emit AddRecord(
             lvars.key,
             lvars.id,
             receivingEntityId,
@@ -389,7 +389,7 @@ contract GenericCompliance is AccessControl {
 
     /// @notice Sets the `nonce` and the `previous` values, and if this is the first record, establishes the `Store` record in the `index`.
     /// @param lvars The `lvars` of the current record.
-    function setNonceAndPrevious(AddEntryVars memory lvars) internal {
+    function setNonceAndPrevious(AddRecordVars memory lvars) internal {
         if (index[lvars.key].exists != true) {
             index[lvars.key] = Store(lvars.previous, 1, true);
             lvars.nonce = 0;
@@ -433,7 +433,7 @@ contract GenericCompliance is AccessControl {
 
     /// @notice Update the object store and the index head and length for the new record.
     function updateObjectAndIndex(
-        AddEntryVars memory lvars,
+        AddRecordVars memory lvars,
         Record memory record
     ) internal {
         objects[lvars.id] = record;
@@ -457,7 +457,7 @@ contract GenericCompliance is AccessControl {
     /// @return nonce The nonce of the record, indicating its sequence in the compliance history.
     /// @return ref A reference link or identifier for additional information about the resource.
     /// @return exists A bool value that is true if this is a record which actually exists on-chain (it has been previously stored).
-    function getEntry(
+    function getRecord(
         bytes32 _id
     )
         public
@@ -543,6 +543,6 @@ contract GenericCompliance is AccessControl {
         )
     {
         bytes32 id = index[_key].head;
-        return getEntry(id);
+        return getRecord(id);
     }
 }
